@@ -1,68 +1,90 @@
-import React, { useState } from "react";
+'use client'
 
-import {
-  OutlinedInput,
-  InputLabel,
-  MenuItem,
-  Select,
-  FormControl,
-  Stack,
-  Chip
-} from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { useState, useEffect } from 'react'
 
-const names = [
-  "Humaira Sims",
-  "Santiago Solis",
-  "Dawid Floyd",
-  "Mateo Barlow",
-  "Samia Navarro",
-  "Kaden Fields",
-  "Genevieve Watkins",
-  "Mariah Hickman",
-  "Rocco Richardson",
-  "Harris Glenn"
-];
+// MUI Imports
+import Chip from '@mui/material/Chip'
+import MenuItem from '@mui/material/MenuItem'
+import Card from '@mui/material/Card'
 
-export default function NewTestFilter() {
-  const [selectedNames, setSelectedNames] = useState([]);
+import type { SelectChangeEvent } from '@mui/material/Select'
 
-
-return (
-    <FormControl sx={{ m: 1, width: 500 }}>
-      <InputLabel>Multiple Select</InputLabel>
-      <Select
-        multiple
-        value={selectedNames}
-        onChange={(e) => setSelectedNames(e.target.value)}
-        input={<OutlinedInput label="Multiple Select" />}
-        renderValue={(selected) => (
-          <Stack gap={1} direction="row" flexWrap="wrap">
-            {selected.map((value) => (
-              <Chip
-                key={value}
-                label={value}
-                onDelete={() =>
-                  setSelectedNames(
-                    selectedNames.filter((item) => item !== value)
-                  )
-                }
-                deleteIcon={
-                  <CancelIcon
-                    onMouseDown={(event) => event.stopPropagation()}
-                  />
-                }
-              />
-            ))}
-          </Stack>
-        )}
-      >
-        {names.map((name) => (
-          <MenuItem key={name} value={name}>
-            {name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  );
+type FilterOption = {
+  id: number
+  name: string
+  sub_categories: { id: string; sub_category: string; image: string }[]
 }
+
+type Props = {
+  selectedFilterOptions: FilterOption[]
+  setSelectedSubCategories: React.Dispatch<React.SetStateAction<string[][]>>
+}
+
+// Component Imports
+import CustomTextField from '@core/components/mui/TextField'
+
+const ITEM_HEIGHT = 48
+const ITEM_PADDING_TOP = 8
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      width: 250,
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
+    }
+  }
+}
+
+const names = ['Oliver Hansen', 'Van Henry', 'April Tucker', 'Ralph Hubbard', 'Omar Alexander']
+
+const NewTestFilter = ({ selectedFilterOptions, setSelectedSubCategories }: Props) => {
+  // States
+  const [personName, setPersonName] = useState<string[]>([])
+
+  const handleChange = (event: SelectChangeEvent<string[]>) => {
+    setPersonName(event.target.value as string[])
+  }
+
+  return (
+    <>
+      <Card style={{ marginTop: '40px', padding: '25px' }}>
+        <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
+          <div>
+            <CustomTextField
+              select
+              fullWidth
+              label='Activity'
+              value={personName}
+              id='demo-multiple-chip'
+              SelectProps={{
+                multiple: true,
+                MenuProps,
+                onChange: handleChange,
+                renderValue: selected => (
+                  <div className='flex flex-wrap gap-1'>
+                    {(selected as unknown as string[]).map(value => (
+                      <Chip key={value} label={value} size='small' />
+                    ))}
+                  </div>
+                )
+              }}
+            >
+              {names.map(name => (
+                <MenuItem key={name} value={name}>
+                  <img
+                    src='/images/avatars/4.png'
+                    alt={`Character ${name}`}
+                    style={{ height: '20px', width: '20px', borderRadius: '50%', marginRight: '5px' }}
+                  />
+                  {name}
+                </MenuItem>
+              ))}
+            </CustomTextField>
+          </div>
+        </div>
+      </Card>
+    </>
+  )
+}
+
+export default NewTestFilter

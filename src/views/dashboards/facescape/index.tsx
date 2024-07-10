@@ -97,11 +97,20 @@ const FaceScapeBasicComponent = () => {
       <Grid item xs={12} md={4}>
         {/* <DragDropImage getRootProps={getRootProps} getInputProps={getInputProps} isDragActive={isDragActive} onDrop={onDrop}/> */}
         <MediaCard></MediaCard>
-        <TestFilter />
+        {/* <TestFilter /> */}
+        {/* <NewTestFilter
+          selectedFilterOptions={selectedFilterOptions}
+          selectedSubCategories={selectedSubCategories}
+          setSelectedSubCategories={setSelectedSubCategories}
+          handleChange={handleChange}
+        /> */}
 
-        {/* <TestFilter/> */}
-
-        {/* <FilterComponent selectedFilterOptions={selectedFilterOptions} selectedSubCategories={selectedSubCategories} handleChange={handleChange}/> */}
+        <FilterComponent
+          selectedFilterOptions={selectedFilterOptions}
+          selectedSubCategories={selectedSubCategories}
+          setSelectedSubCategories={setSelectedSubCategories}
+          handleChange={handleChange}
+        />
 
         <div style={{ marginTop: '40px' }}>
           <Button style={{ width: '100%' }} variant='contained'>

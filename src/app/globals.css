@@ -124,7 +124,15 @@ code {
   background-color: rgb(var(--mui-palette-info-mainChannel) / 0.08);
   border: 0;
 }
-.input-error
-{
+.input-error {
   color: red;
+}
+
+.MuiTypography-root::after {
+  content: '' !important;
+}
+.MuiSelect-select {
+  padding-block-start: 10px !important;
+  block-size: auto !important;
+  padding-block-end: 10px !important;
 }
