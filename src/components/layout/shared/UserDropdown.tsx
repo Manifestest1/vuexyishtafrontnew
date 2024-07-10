@@ -1,10 +1,8 @@
 'use client'
 
 // React Imports
-import { useRef, useState,useContext } from 'react'
+import { useRef, useState, useContext } from 'react'
 import type { MouseEvent } from 'react'
-
-import AuthContext from '@/context/AuthContext'
 
 // Next Imports
 import { useParams, useRouter } from 'next/navigation'
@@ -22,6 +20,8 @@ import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
+
+import AuthContext from '@/context/AuthContext'
 
 // Third-party Imports
 // import { signOut, useSession } from 'next-auth/react'
@@ -48,13 +48,14 @@ const BadgeContentSpan = styled('span')({
 const UserDropdown = () => {
   // States
   const [open, setOpen] = useState(false)
-  const { user,logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext)
 
   // Refs
   const anchorRef = useRef<HTMLDivElement>(null)
 
   // Hooks
   const router = useRouter()
+
   // const { data: session } = useSession()
   const { settings } = useSettings()
   const { lang: locale } = useParams()
@@ -78,8 +79,8 @@ const UserDropdown = () => {
   const handleUserLogout = async () => {
     try {
       // Sign out from the app
-      // await signOut({ redirect: false }) 
-      await logout();
+      // await signOut({ redirect: false })
+      await logout()
 
       // Redirect to login page
       router.push(getLocalizedUrl('/login', locale as Locale))
@@ -137,7 +138,7 @@ const UserDropdown = () => {
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e, '/pages/user-profile')}>
+                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e, '/apps/user/view')}>
                     <i className='tabler-user text-[22px]' />
                     <Typography color='text.primary'>My Profile</Typography>
                   </MenuItem>

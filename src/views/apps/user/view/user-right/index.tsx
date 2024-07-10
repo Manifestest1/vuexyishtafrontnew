@@ -15,7 +15,7 @@ import CustomTabList from '@core/components/mui/TabList'
 
 const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactElement } }) => {
   // States
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState('billing-plans')
 
   const handleChange = (event: SyntheticEvent, value: string) => {
     setActiveTab(value)
@@ -27,14 +27,15 @@ const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactE
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <CustomTabList onChange={handleChange} variant='scrollable' pill='true'>
-              <Tab icon={<i className='tabler-users' />} value='overview' label='Overview' iconPosition='start' />
-              <Tab icon={<i className='tabler-lock' />} value='security' label='Security' iconPosition='start' />
               <Tab
                 icon={<i className='tabler-bookmark' />}
                 value='billing-plans'
                 label='Billing & Plans'
                 iconPosition='start'
               />
+              {/* <Tab icon={<i className='tabler-users' />} value='overview' label='Overview' iconPosition='start' />
+              <Tab icon={<i className='tabler-lock' />} value='security' label='Security' iconPosition='start' /> */}
+
               {/* <Tab
                 icon={<i className='tabler-bell' />}
                 value='notifications'

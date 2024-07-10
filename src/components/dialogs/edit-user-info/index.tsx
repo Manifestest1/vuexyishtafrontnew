@@ -99,10 +99,10 @@ const EditUserInfo = ({ open, setOpen, updateUserDataFun, data, getuserData, upd
       <form onSubmit={handleSubmit}>
         <DialogContent className='overflow-visible pbs-0 sm:pli-16'>
           <Grid container spacing={5}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <CustomTextField
                 fullWidth
-                label='First Name'
+                label='Name'
                 placeholder='John'
                 // value={userData?.firstName}
                 // onChange={e => setUserData({ ...userData, firstName: e.target.value })}
@@ -111,7 +111,7 @@ const EditUserInfo = ({ open, setOpen, updateUserDataFun, data, getuserData, upd
                 onChange={e => updateuserData({ ...getuserData, name: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            {/* <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth
                 label='Last Name'
@@ -128,7 +128,7 @@ const EditUserInfo = ({ open, setOpen, updateUserDataFun, data, getuserData, upd
                 value={userData?.userName}
                 onChange={e => setUserData({ ...userData, userName: e.target.value })}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={6}>
               <CustomTextField
                 fullWidth

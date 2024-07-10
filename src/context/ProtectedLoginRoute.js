@@ -1,24 +1,25 @@
-import { useContext, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import AuthContext from '../context/AuthContext';
+import { useContext, useEffect } from 'react'
 
-const ProtectedLoginRoute = ({ children }) => {  
-    const token = localStorage.getItem('token');   
-    const { loading } = useContext(AuthContext); 
-    const router = useRouter();
+import { useRouter } from 'next/navigation'
 
-    useEffect(() => {
-        if (loading && token) 
-        {
-            router.push('/en/dashboards/crm');
-        }
-    }, [loading, token, router]);
+import AuthContext from '../context/AuthContext'
 
-    if (loading || token) {
-        return <p>Loading...</p>; 
+const ProtectedLoginRoute = ({ children }) => {
+  const token = localStorage.getItem('token')
+  const { loading } = useContext(AuthContext)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (loading && token) {
+      router.push('/en/dashboards/crm')
     }
+  }, [loading, token, router])
 
-    return children;
-};
+  if (loading || token) {
+    return <p>Loading...</p>
+  }
 
-export default ProtectedLoginRoute;
+  return children
+}
+
+export default ProtectedLoginRoute

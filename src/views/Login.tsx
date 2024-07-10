@@ -1,15 +1,11 @@
 'use client'
 
-// React Imports
 import { useState, useContext } from 'react'
 
-// Next Imports
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
 import Grid from '@mui/material/Grid'
-
-// MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -19,69 +15,48 @@ import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
+import { useForm, Controller } from 'react-hook-form'
 
 import ProtectedLoginRoute from '../context/ProtectedLoginRoute'
-
-// Type Imports
 import type { Locale } from '@configs/i18n'
-
-// Component Imports
 import Logo from '@components/layout/shared/Logo'
 import CustomTextField from '@core/components/mui/TextField'
-
-// Config Imports
 import themeConfig from '@configs/themeConfig'
-
-// Util Imports
 import { getLocalizedUrl } from '@/utils/i18n'
-
-// Styled Component Imports
 import AuthIllustrationWrapper from './pages/auth/AuthIllustrationWrapper'
 import AuthContext from '@/context/AuthContext'
 
+type FormValues = {
+  email: string
+  password: string
+}
+
 const LoginV1 = () => {
-  // States
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>({
+    defaultValues: {
+      email: '',
+      password: ''
+    }
+  })
+
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const { login } = useContext(AuthContext)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
-  const [error, setError] = useState()
-
-  const validateEmail = email => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    return regex.test(email)
-  }
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-
-    if (!email || !password) {
-      setError('Please enter both email and password.')
-
-      return
-    }
-
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address.')
-
-      return
-    }
-
-    setError(' ')
-
+  const onSubmit = async (data: FormValues) => {
     try {
-      await login(email, password)
+      await login(data.email, data.password)
     } catch (error) {
-      setError('Please enter right credential.')
-
-      //setError(error.message); // Set the error message from the API
+      setErrorMessage('Invalid email or password. Please try again.')
+      console.error(error)
     }
   }
 
-  // Hooks
   const { lang: locale } = useParams()
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
@@ -102,38 +77,65 @@ const LoginV1 = () => {
                   <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
                   <Typography>Please sign-in to your account and start the adventure</Typography>
                 </div>
-                <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-6'>
-                  <CustomTextField
-                    type='email'
-                    required
-                    autoFocus
-                    fullWidth
-                    label='Email'
-                    placeholder='Enter your email'
-                    onChange={e => setEmail(e.target.value)}
-                  />
-                  <CustomTextField
-                    fullWidth
-                    label='Password'
-                    placeholder='············'
-                    id='outlined-adornment-password'
-                    type={isPasswordShown ? 'text' : 'password'}
-                    onChange={e => setPassword(e.target.value)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position='end'>
-                          <IconButton
-                            edge='end'
-                            onClick={handleClickShowPassword}
-                            onMouseDown={e => e.preventDefault()}
-                          >
-                            <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                          </IconButton>
-                        </InputAdornment>
-                      )
+                {errorMessage && (
+                  <Typography color='error' className='mbe-6'>
+                    {errorMessage}
+                  </Typography>
+                )}
+                <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+                  <Controller
+                    name='email'
+                    control={control}
+                    rules={{
+                      required: 'This field is required.',
+                      pattern: {
+                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                        message: 'Please enter a valid email address.'
+                      }
                     }}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        fullWidth
+                        label='Email'
+                        placeholder='Enter your email'
+                        error={!!errors.email}
+                        helperText={errors.email ? errors.email.message : ''}
+                      />
+                    )}
                   />
-                  {error && <span className='input-error'>{error}</span>}
+                  <Controller
+                    name='password'
+                    control={control}
+                    rules={{ required: 'This field is required.' }}
+                    render={({ field }) => (
+                      <CustomTextField
+                        {...field}
+                        fullWidth
+                        label='Password'
+                        id='outlined-password'
+                        placeholder='············'
+                        type={isPasswordShown ? 'text' : 'password'}
+                        error={!!errors.password}
+                        helperText={errors.password ? errors.password.message : ''}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position='end'>
+                              <IconButton
+                                edge='end'
+                                onClick={handleClickShowPassword}
+                                onMouseDown={e => e.preventDefault()}
+                                aria-label='toggle password visibility'
+                              >
+                                <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                              </IconButton>
+                            </InputAdornment>
+                          )
+                        }}
+                      />
+                    )}
+                  />
+
                   <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
                     <FormControlLabel control={<Checkbox />} label='Remember me' />
                     <Typography

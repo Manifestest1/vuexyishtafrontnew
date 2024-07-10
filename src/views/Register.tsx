@@ -20,6 +20,8 @@ import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
 
+import { useForm, Controller } from 'react-hook-form'
+
 // Type Imports
 import type { Locale } from '@configs/i18n'
 
@@ -33,11 +35,29 @@ import { getLocalizedUrl } from '@/utils/i18n'
 // Styled Component Imports
 import AuthIllustrationWrapper from './pages/auth/AuthIllustrationWrapper'
 import AuthContext from '@/context/AuthContext'
-import { Email } from '../../node_modules_old/@mui/icons-material'
+
+type FormValues = {
+  name: string
+  email: string
+  password: string
+}
 
 const Register = () => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: '',
+      email: '',
+      password: ''
+    }
+  })
+
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   // Hooks
   const { lang: locale } = useParams()
@@ -48,48 +68,13 @@ const Register = () => {
 
   const { register } = useContext(AuthContext)
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordConfirmation, setPasswordConfirmation] = useState('')
-
-  const [error, setError] = useState()
-
-  const validateEmail = email => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    return regex.test(email)
-  }
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault()
-
-    if (!name) {
-      setError('Please enter first name.')
-
-      return
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await register(data.name, data.email, data.password)
+    } catch (error) {
+      setErrorMessage('This email already exit. Please try again.')
+      console.error(error)
     }
-
-    if (!email) {
-      setError('Please enter email.')
-
-      return
-    }
-
-    if (!password) {
-      setError('Please enter password.')
-
-      return
-    }
-
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address.')
-
-      return
-    }
-
-    setError('')
-    await register(name, email, password, passwordConfirmation)
   }
 
   return (
@@ -107,44 +92,83 @@ const Register = () => {
                 <Typography variant='h4'>Adventure starts here 🚀</Typography>
                 <Typography>Make your app management easy and fun!</Typography>
               </div>
-              <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-6'>
-                <CustomTextField
-                  autoFocus
-                  fullWidth
-                  label='First Name'
-                  placeholder='Enter your first name'
-                  onChange={e => setName(e.target.value)}
-                />
-                <CustomTextField
-                  autoFocus
-                  fullWidth
-                  label='Last Name'
-                  placeholder='Enter your last name'
-                  onChange={e => setName(e.target.value)}
-                />
-                <CustomTextField
-                  fullWidth
-                  label='Email'
-                  placeholder='Enter your email'
-                  onChange={e => setEmail(e.target.value)}
-                />
-                <CustomTextField
-                  fullWidth
-                  label='Password'
-                  placeholder='············'
-                  type={isPasswordShown ? 'text' : 'password'}
-                  onChange={e => setPassword(e.target.value)}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
-                          <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
-                        </IconButton>
-                      </InputAdornment>
-                    )
+
+              <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+                <Controller
+                  name='name'
+                  control={control}
+                  rules={{
+                    required: 'This field is required.'
                   }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      label='Name'
+                      placeholder='Enter your name'
+                      error={!!errors.email}
+                      helperText={errors.name ? errors.name.message : ''}
+                    />
+                  )}
                 />
-                {error && <span className='input-error'>{error}</span>}
+                <Controller
+                  name='email'
+                  control={control}
+                  rules={{
+                    required: 'This field is required.',
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                      message: 'Please enter a valid email address.'
+                    }
+                  }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      label='Email'
+                      placeholder='Enter your email'
+                      error={!!errors.email}
+                      helperText={errors.email ? errors.email.message : ''}
+                    />
+                  )}
+                />
+                {errorMessage && (
+                  <Typography color='error' className='mbe-6'>
+                    {errorMessage}
+                  </Typography>
+                )}
+                <Controller
+                  name='password'
+                  control={control}
+                  rules={{ required: 'This field is required.' }}
+                  render={({ field }) => (
+                    <CustomTextField
+                      {...field}
+                      fullWidth
+                      label='Password'
+                      id='outlined-password'
+                      placeholder='············'
+                      type={isPasswordShown ? 'text' : 'password'}
+                      error={!!errors.password}
+                      helperText={errors.password ? errors.password.message : ''}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position='end'>
+                            <IconButton
+                              edge='end'
+                              onClick={handleClickShowPassword}
+                              onMouseDown={e => e.preventDefault()}
+                              aria-label='toggle password visibility'
+                            >
+                              <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
+                    />
+                  )}
+                />
+
                 <FormControlLabel
                   control={<Checkbox />}
                   label={

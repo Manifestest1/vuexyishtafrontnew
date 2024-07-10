@@ -111,7 +111,7 @@ const UserDetails = () => {
             <div className='flex flex-col gap-2'>
               <div className='flex items-center flex-wrap gap-x-1.5'>
                 <Typography className='font-medium' color='text.primary'>
-                  Username:
+                  Name:
                 </Typography>
                 <Typography>{getuserData?.name}</Typography>
               </div>
