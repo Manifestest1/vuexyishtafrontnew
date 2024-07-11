@@ -4,6 +4,8 @@ import { useTheme } from '@mui/material/styles'
 import { Card, CardContent, Typography, MenuItem, FormControl, Select, Box, Avatar } from '@mui/material'
 import InputLabel from '@mui/material/InputLabel'
 
+import CustomTextField from '@core/components/mui/TextField'
+
 type FilterOption = {
   id: number
   name: string
@@ -136,6 +138,11 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
             </FormControl>
           </div>
         ))}
+        <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
+          <div>
+            <CustomTextField type='text' fullWidth label='Other' placeholder='Other' />
+          </div>
+        </div>
       </CardContent>
     </Card>
   )
