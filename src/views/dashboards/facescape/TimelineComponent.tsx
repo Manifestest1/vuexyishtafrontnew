@@ -32,7 +32,13 @@ const Timeline = styled(MuiTimeline)<TimelineProps>({
   }
 })
 
-const TimelineComponent = () => {
+type Props = {
+  generateImages: any
+}
+
+const TimelineComponent = ({ generateImages }: Props) => {
+  const staticImageUrls = ['/images/avatars/2.png', '/images/avatars/2.png', '/images/avatars/2.png']
+
   return (
     <div className='mt-8'>
       <Timeline>
@@ -86,15 +92,24 @@ const TimelineComponent = () => {
               <CardContent className='flex flex-col gap-6 pbe-5'>
                 <div className='flex flex-wrap items-center justify-between gap-x-2 mbe-2.5'>
                   <Grid container spacing={12}>
-                    <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
-                    </Grid>
+                    {/* Conditional rendering of static image */}
+                    {generateImages.length > 0 ? (
+                      // Render generateImages array using map
+                      generateImages.map((imageUrl, index) => (
+                        <Grid item xs={12} md={4} key={index}>
+                          <img
+                            src={imageUrl}
+                            alt={`Image ${index}`}
+                            style={{ height: 200, width: '100%', objectFit: 'cover' }}
+                          />
+                        </Grid>
+                      ))
+                    ) : (
+                      // Render static image if generateImages array is empty
+                      <Grid item xs={12} md={4}>
+                        <img src='/images/avatars/2.png' alt='Static Image' height={200} />
+                      </Grid>
+                    )}
                   </Grid>
                 </div>
               </CardContent>

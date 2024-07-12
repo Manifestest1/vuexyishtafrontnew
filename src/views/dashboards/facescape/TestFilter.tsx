@@ -1,226 +1,152 @@
-// React Imports
-import { useState } from 'react'
-import type { ChangeEvent } from 'react'
+import { useState, useEffect } from 'react'
 
-// MUI Imports
-import Chip from '@mui/material/Chip'
-import MenuItem from '@mui/material/MenuItem'
-import Card from '@mui/material/Card'
+import { useTheme } from '@mui/material/styles'
+import { Card, CardContent, Typography, MenuItem, FormControl, Select, Box, Avatar } from '@mui/material'
+import InputLabel from '@mui/material/InputLabel'
 
-import type { SelectChangeEvent } from '@mui/material/Select'
-
-// Component Imports
 import CustomTextField from '@core/components/mui/TextField'
+import { image_base_path } from '@/context/api/apiService'
 
-const ITEM_HEIGHT = 48
-const ITEM_PADDING_TOP = 8
-
-const MenuProps = {
-  PaperProps: {
-    style: {
-      width: 250,
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
-    }
-  }
+type FilterOption = {
+  id: number
+  name: string
+  sub_categories: { id: string; sub_category: string; image: string }[]
 }
 
-const names = ['Oliver Hansen', 'Van Henry', 'April Tucker', 'Ralph Hubbard', 'Omar Alexander']
+type Props = {
+  selectedFilterOptions: FilterOption[]
+  setSelectedSubCategories: React.Dispatch<React.SetStateAction<string[][]>>
+}
 
-const TestFilter = () => {
-  // States
-  const [personName, setPersonName] = useState<string[]>([])
-  const [personName1, setPersonName1] = useState<string[]>([])
-  const [personName2, setPersonName2] = useState<string[]>([])
-  const [personName3, setPersonName3] = useState<string[]>([])
-  const [selectOther, setOther] = useState<string[]>([])
-  const [personNameNative, setPersonNameNative] = useState<string[]>([])
+const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Props) => {
+  const theme = useTheme()
 
-  const handleChange = (event: SelectChangeEvent<string[]>) => {
-    setPersonName(event.target.value as string[])
+  const [selectedSubCategories, setSelectedSubCategoriesLocal] = useState<string[][]>(
+    selectedFilterOptions.map(() => [])
+  )
+
+  const handleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
+    console.log('Filter Value Get', index)
+    const updatedSelectedSubCategories = [...selectedSubCategories]
+
+    updatedSelectedSubCategories[index] = event.target.value as string[]
+    setSelectedSubCategoriesLocal(updatedSelectedSubCategories)
+    setSelectedSubCategories(updatedSelectedSubCategories) // Propagate changes using the prop setter
   }
 
-  const handleChange1 = (event: SelectChangeEvent<string[]>) => {
-    setPersonName1(event.target.value as string[])
-  }
+  useEffect(() => {
+    // Update logic for dependent fields here
+    if (selectedSubCategories[0] && selectedSubCategories[0].length > 0) {
+      const updatedSelectedSubCategories = [...selectedSubCategories]
 
-  const handleChange2 = (event: SelectChangeEvent<string[]>) => {
-    setPersonName2(event.target.value as string[])
-  }
-
-  const handleChange3 = (event: SelectChangeEvent<string[]>) => {
-    setPersonName3(event.target.value as string[])
-  }
-
-  const handleChange4 = (event: SelectChangeEvent<string[]>) => {
-    setOther(event.target.value as string[])
-  }
-
-  const handleChangeMultipleNative = (event: ChangeEvent<HTMLSelectElement>) => {
-    const { options } = event.target
-    const value: string[] = []
-
-    for (let i = 0, l = options.length; i < l; i += 1) {
-      if (options[i].selected) {
-        value.push(options[i].value)
-      }
+      updatedSelectedSubCategories[1] = selectedSubCategories[0] // Copy selection from the first field to the second field
+      setSelectedSubCategoriesLocal(updatedSelectedSubCategories)
+      setSelectedSubCategories(updatedSelectedSubCategories) // Propagate changes using the prop setter
     }
-
-    setPersonNameNative(value)
-  }
+  }, [])
 
   return (
-    <>
-      <Card style={{ marginTop: '40px', padding: '25px' }}>
-        <div className='flex gap-4 flex-col'>
-          <div>
-            <CustomTextField
-              select
-              fullWidth
-              label='Location'
-              value={personName} // Assuming personName is an object with 'name' and 'image' properties
-              id='demo-multiple-chip'
-              SelectProps={{
-                multiple: true,
-                MenuProps,
-                onChange: handleChange,
-                renderValue: selected => (
-                  <div className='flex flex-wrap gap-1'>
-                    {(selected as unknown as string[]).map(value => (
-                      <Chip key={value.name} label={value.name} size='small' />
-                    ))}
-                  </div>
-                )
-              }}
-            >
-              {names.map(name => (
-                <MenuItem key={name} value={{ name: name, image: `/images/avatars/${name}.png` }}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <img
-                      src='/images/avatars/2.png'
-                      alt={`Character ${name}`}
-                      style={{ height: '20px', width: '20px', borderRadius: '50%', marginRight: '5px' }}
-                    />
-                    {name}
-                  </div>
-                </MenuItem>
-              ))}
-            </CustomTextField>
-          </div>
-        </div>
+    <Card className='mt-8'>
+      <CardContent>
+        {selectedFilterOptions.map((selectFilter, index) => (
+          <div key={selectFilter.id} style={{ marginBottom: '20px' }}>
+            <Typography variant='body2' sx={{ fontWeight: 600 }}>
+              <b>{selectFilter.name}</b>
+            </Typography>
 
-        <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
-          <div>
-            <CustomTextField
-              select
-              fullWidth
-              label='Activity'
-              value={personName1}
-              id='demo-multiple-chip'
-              SelectProps={{
-                multiple: true,
-                MenuProps,
-                onChange: handleChange1,
-                renderValue: selected => (
-                  <div className='flex flex-wrap gap-1'>
-                    {(selected as unknown as string[]).map(value => (
-                      <Chip key={value} label={value} size='small' />
+            <FormControl fullWidth>
+              <InputLabel>..Select..</InputLabel>
+              <Select
+                label='Status'
+                multiple
+                value={selectedSubCategories[index] || []}
+                onChange={handleChange(index)}
+                renderValue={selected => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {(selected as string[]).map(value => (
+                      <Box
+                        key={value}
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          borderRadius: '5px',
+                          padding: '5px',
+                          cursor: 'pointer',
+                          backgroundColor: theme.palette.action.hover,
+                          marginRight: '5px',
+                          maxWidth: 'calc(100% - 10px)' // Adjust based on padding and margin
+                        }}
+                      >
+                        <Avatar
+                          src={image_base_path() + selectFilter.sub_categories.find(sub => sub.id === value)?.image}
+                          alt='Uploaded Preview'
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: '50%',
+                            marginRight: '12px'
+                          }}
+                        />
+                        <Typography variant='body2' sx={{ marginRight: '8px' }}>
+                          {selectFilter.sub_categories.find(sub => sub.id === value)?.sub_category}
+                        </Typography>
+                      </Box>
                     ))}
-                  </div>
-                )
-              }}
-            >
-              {names.map(name => (
-                <MenuItem key={name} value={name}>
-                  <img
-                    src='/images/avatars/4.png'
-                    alt={`Character ${name}`}
-                    style={{ height: '20px', width: '20px', borderRadius: '50%', marginRight: '5px' }}
-                  />
-                  {name}
+                  </Box>
+                )}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 'auto' // Adjust the max height as needed
+                    }
+                  }
+                }}
+              >
+                <MenuItem disabled value='Select Category'>
+                  Select Sub Category
                 </MenuItem>
-              ))}
-            </CustomTextField>
+                {selectFilter.sub_categories.map((subCategory, subIndex) => (
+                  <MenuItem key={subIndex} value={subCategory.id}>
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        borderRadius: '5px',
+                        padding: '5px',
+                        cursor: 'pointer',
+                        backgroundColor: theme.palette.action.hover,
+                        marginRight: '5px',
+                        maxWidth: 'calc(100% - 10px)' // Adjust based on padding and margin
+                      }}
+                    >
+                      <Avatar
+                        src={image_base_path() + subCategory.image}
+                        alt='Uploaded Preview'
+                        sx={{
+                          width: 20,
+                          height: 20,
+                          borderRadius: '50%',
+                          marginRight: '12px'
+                        }}
+                      />
+                      <Typography variant='body2' sx={{ marginRight: '8px' }}>
+                        {subCategory.sub_category}
+                      </Typography>
+                    </Box>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
-        </div>
-
-        <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
-          <div>
-            <CustomTextField
-              select
-              fullWidth
-              label='Select Item'
-              value={personName2}
-              id='demo-multiple-chip'
-              SelectProps={{
-                multiple: true,
-                MenuProps,
-                onChange: handleChange2,
-                renderValue: selected => (
-                  <div className='flex flex-wrap gap-1'>
-                    {(selected as unknown as string[]).map(value => (
-                      <Chip key={value} label={value} size='small' />
-                    ))}
-                  </div>
-                )
-              }}
-            >
-              {names.map(name => (
-                <MenuItem key={name} value={name}>
-                  <img
-                    src='/images/avatars/2.png'
-                    alt={`Character ${name}`}
-                    style={{ height: '20px', width: '20px', borderRadius: '50%', marginRight: '5px' }}
-                  />
-                  {name}
-                </MenuItem>
-              ))}
-            </CustomTextField>
-          </div>
-        </div>
-
-        <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
-          <div>
-            <CustomTextField
-              select
-              fullWidth
-              label='Select Item'
-              value={personName3}
-              id='demo-multiple-chip'
-              SelectProps={{
-                multiple: true,
-                MenuProps,
-                onChange: handleChange3,
-                renderValue: selected => (
-                  <div className='flex flex-wrap gap-1'>
-                    {(selected as unknown as string[]).map(value => (
-                      <Chip key={value} label={value} size='small' />
-                    ))}
-                  </div>
-                )
-              }}
-            >
-              {names.map(name => (
-                <MenuItem key={name} value={name}>
-                  <img
-                    src='/images/avatars/2.png'
-                    alt={`Character ${name}`}
-                    style={{ height: '20px', width: '20px', borderRadius: '50%', marginRight: '5px' }}
-                  />
-                  {name}
-                </MenuItem>
-              ))}
-            </CustomTextField>
-          </div>
-        </div>
-
+        ))}
         <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
           <div>
             <CustomTextField type='text' fullWidth label='Other' placeholder='Other' />
           </div>
         </div>
-      </Card>
-    </>
+      </CardContent>
+    </Card>
   )
 }
 
-export default TestFilter
+export default FilterComponent

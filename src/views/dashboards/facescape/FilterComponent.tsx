@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, MenuItem, FormControl, Select, Box, Avat
 import InputLabel from '@mui/material/InputLabel'
 
 import CustomTextField from '@core/components/mui/TextField'
+import { image_base_path } from '@/context/api/apiService'
 
 type FilterOption = {
   id: number
@@ -15,20 +16,50 @@ type FilterOption = {
 type Props = {
   selectedFilterOptions: FilterOption[]
   setSelectedSubCategories: React.Dispatch<React.SetStateAction<string[][]>>
+  setFilterSelectedSubCategories: any
 }
 
-const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Props) => {
+const FilterComponent = ({
+  selectedFilterOptions,
+  setSelectedSubCategories,
+  setFilterSelectedSubCategories
+}: Props) => {
   const theme = useTheme()
-  const image_base_path = 'http://localhost:8000/'
 
   const [selectedSubCategories, setSelectedSubCategoriesLocal] = useState<string[][]>(
     selectedFilterOptions.map(() => [])
   )
 
   const handleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
+    const selectedIds = event.target.value as string[] // Assuming selected IDs are strings
+
+    // Update state with the selected IDs
     const updatedSelectedSubCategories = [...selectedSubCategories]
 
-    updatedSelectedSubCategories[index] = event.target.value as string[]
+    updatedSelectedSubCategories[index] = selectedIds
+
+    // Initialize array to hold selected labels
+    const selectedLabels: string[] = []
+
+    // Iterate through updatedSelectedSubCategories to gather selected labels
+
+    // updatedSelectedSubCategories.forEach((ids, idx) => {
+    //   ids.forEach(id => {
+    //     const subCategory = selectedFilterOptions[idx].sub_categories.find(sub => sub.id === id)
+
+    //     if (subCategory) {
+    //       selectedLabels.push(subCategory.sub_category)
+    //     }
+    //   })
+    // })
+
+    // Join all selected labels with comma and space
+    const allSelectedText = selectedLabels.join(', ')
+
+    console.log('Selected Items:', allSelectedText)
+
+    // Update state or propagate changes as needed
+    setFilterSelectedSubCategories(allSelectedText)
     setSelectedSubCategoriesLocal(updatedSelectedSubCategories)
     setSelectedSubCategories(updatedSelectedSubCategories) // Propagate changes using the prop setter
   }
@@ -54,7 +85,7 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
             </Typography>
 
             <FormControl fullWidth>
-              <InputLabel>..Select..</InputLabel>
+              <InputLabel>--Select--</InputLabel>
               <Select
                 label='Status'
                 multiple
@@ -77,7 +108,7 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
                         }}
                       >
                         <Avatar
-                          src={image_base_path + selectFilter.sub_categories.find(sub => sub.id === value)?.image}
+                          src={image_base_path() + selectFilter.sub_categories.find(sub => sub.id === value)?.image}
                           alt='Uploaded Preview'
                           sx={{
                             width: 20,
@@ -101,9 +132,6 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
                   }
                 }}
               >
-                <MenuItem disabled value='Select Category'>
-                  Select Sub Category
-                </MenuItem>
                 {selectFilter.sub_categories.map((subCategory, subIndex) => (
                   <MenuItem key={subIndex} value={subCategory.id}>
                     <Box
@@ -119,7 +147,7 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
                       }}
                     >
                       <Avatar
-                        src={image_base_path + subCategory.image}
+                        src={image_base_path() + subCategory.image}
                         alt='Uploaded Preview'
                         sx={{
                           width: 20,

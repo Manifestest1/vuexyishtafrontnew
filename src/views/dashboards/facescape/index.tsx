@@ -26,9 +26,75 @@ const FaceScapeBasicComponent = () => {
 
   const [selectedFilterOptions, setFilterOptions] = useState([])
   const [selectedSubCategories, setSelectedSubCategories] = useState([])
+  const [filterSelectedSubCategories, setFilterSelectedSubCategories] = useState([])
+  const [generateImages, setGenerateImages] = useState([])
 
   const handleChange = event => {
     setSelectedSubCategories(event.target.value) // event.target.value will be an array of selected values
+  }
+
+  const genrateApiFunction = async () => {
+    console.log('Filter Data', filterSelectedSubCategories)
+
+    try {
+      const response = await fetch('https://api.gooey.ai/v3/FaceInpainting/async/', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer sk-07ztMzsF169B5xoh4Xn9MMhfUWQfPYz3J1I53P288wS6IZNQ',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          input_image: 'https://i.imghippo.com/files/dv8ID1718827153.png',
+          text_prompt: filterSelectedSubCategories,
+          num_outputs: 3
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText)
+      }
+
+      const data = await response.json()
+
+      console.log('API Response:', data)
+
+      // Apply Get Images Api
+
+      setTimeout(() => {
+        getGenerateImages(data.run_id)
+      }, 25000)
+
+      // Apply Get Images Api
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error)
+    }
+  }
+
+  const getGenerateImages = async run_id => {
+    const runId = run_id // Replace with your actual run_id
+
+    try {
+      const response = await fetch(`https://api.gooey.ai/v3/FaceInpainting/status/?run_id=${runId}`, {
+        headers: {
+          Authorization: 'Bearer sk-07ztMzsF169B5xoh4Xn9MMhfUWQfPYz3J1I53P288wS6IZNQ',
+          'Content-Type': 'application/json'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok ' + response.statusText)
+      }
+
+      const data = await response.json()
+
+      console.log('API Response Generate Images:', data)
+
+      setGenerateImages(data.output.output_images)
+
+      // Process the API response as needed
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error)
+    }
   }
 
   useEffect(() => {
@@ -57,11 +123,12 @@ const FaceScapeBasicComponent = () => {
           selectedFilterOptions={selectedFilterOptions}
           selectedSubCategories={selectedSubCategories}
           setSelectedSubCategories={setSelectedSubCategories}
+          setFilterSelectedSubCategories={setFilterSelectedSubCategories}
           handleChange={handleChange}
         />
 
         <div style={{ marginTop: '40px' }}>
-          <Button style={{ width: '100%' }} variant='contained'>
+          <Button onClick={genrateApiFunction} style={{ width: '100%' }} variant='contained'>
             Generate
           </Button>
         </div>
@@ -77,7 +144,7 @@ const FaceScapeBasicComponent = () => {
           setBatchSize={setBatchSize}
         ></ImageFilterComponent>
 
-        <TimelineComponent />
+        <TimelineComponent generateImages={generateImages} />
       </Grid>
     </Grid>
   )

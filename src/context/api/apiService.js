@@ -1,5 +1,9 @@
 import axios from '../../utils/axios'
 
+export const image_base_path = () => {
+  return 'http://localhost:8000/'
+}
+
 export const getAuthUserData = () => {
   return axios.get('/user')
 }
