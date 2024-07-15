@@ -14,7 +14,7 @@ type Props = {
 const ImageFilterComponent = ({ quality, setQuality, aspectRatio, setAspectRatio, batchSize, setBatchSize }: Props) => {
   return (
     <Card>
-      <CardHeader></CardHeader>
+      {/* <CardHeader></CardHeader> */}
 
       <CardContent>
         <Box sx={{ display: 'flex', gap: 2 }}>

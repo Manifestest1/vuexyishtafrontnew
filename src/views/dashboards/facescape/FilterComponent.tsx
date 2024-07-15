@@ -10,19 +10,23 @@ import { image_base_path } from '@/context/api/apiService'
 type FilterOption = {
   id: number
   name: string
-  sub_categories: { id: string; sub_category: string; image: string }[]
+  sub_categories: { id: string; sub_category: string; image: string }[] 
 }
 
 type Props = {
   selectedFilterOptions: FilterOption[]
   setSelectedSubCategories: React.Dispatch<React.SetStateAction<string[][]>>
   setFilterSelectedSubCategories: any
+  setFilterSelectedInputCategories: any
+  filterSelectedInputCategories: any
 }
 
 const FilterComponent = ({
   selectedFilterOptions,
   setSelectedSubCategories,
-  setFilterSelectedSubCategories
+  setFilterSelectedSubCategories,
+  setFilterSelectedInputCategories,
+  filterSelectedInputCategories
 }: Props) => {
   const theme = useTheme()
 
@@ -45,17 +49,45 @@ const FilterComponent = ({
 
     // updatedSelectedSubCategories.forEach((ids, idx) => {
     //   ids.forEach(id => {
-    //     const subCategory = selectedFilterOptions[idx].sub_categories.find(sub => sub.id === id)
-
+    //     const subCategory = selectedFilterOptions[idx].sub_categories.find(sub => sub.id === id);
+    
     //     if (subCategory) {
-    //       selectedLabels.push(subCategory.sub_category)
+    //       selectedLabels.push(subCategory.api_key);
     //     }
-    //   })
-    // })
+    //   });
+    // });
 
-    // Join all selected labels with comma and space
+    async function processData() 
+    {
+      for (let idx = 0; idx < updatedSelectedSubCategories.length; idx++) {
+        const ids = updatedSelectedSubCategories[idx];
+    
+        // Check if ids is an array before iterating
+        if (Array.isArray(ids)) {
+          for (const id of ids) {
+            const subCategory = selectedFilterOptions[idx].sub_categories.find(sub => sub.id === id);
+    
+            if (subCategory) {
+              selectedLabels.push(subCategory.api_key);
+            }
+          }
+        }
+      }
+    }
+    
+    // Call the async function
+    processData()
+      .then(() => {
+        console.log("Data processing completed successfully");
+        // Any further operations after data processing completes
+      })
+      .catch(error => {
+        console.error("Error processing data:", error);
+      });
+    
+      // Join all selected labels with comma and space
     const allSelectedText = selectedLabels.join(', ')
-
+    
     console.log('Selected Items:', allSelectedText)
 
     // Update state or propagate changes as needed
@@ -63,6 +95,11 @@ const FilterComponent = ({
     setSelectedSubCategoriesLocal(updatedSelectedSubCategories)
     setSelectedSubCategories(updatedSelectedSubCategories) // Propagate changes using the prop setter
   }
+
+  const handleInputChange = (newValue) => {
+    // Update parent state directly
+    setFilterSelectedInputCategories(newValue);
+};
 
   useEffect(() => {
     // Update logic for dependent fields here
@@ -80,12 +117,12 @@ const FilterComponent = ({
       <CardContent>
         {selectedFilterOptions.map((selectFilter, index) => (
           <div key={selectFilter.id} style={{ marginBottom: '20px' }}>
-            <Typography variant='body2' sx={{ fontWeight: 600 }}>
+            <Typography variant='body2' sx={{ fontWeight: 600,marginBottom: '4px' }}>
               <b>{selectFilter.name}</b>
             </Typography>
 
             <FormControl fullWidth>
-              <InputLabel>--Select--</InputLabel>
+              <InputLabel sx={{marginTop:'-2px',fontSize:'12px'}}>--Select--</InputLabel>
               <Select
                 label='Status'
                 multiple
@@ -168,7 +205,14 @@ const FilterComponent = ({
         ))}
         <div className='flex gap-4 flex-col' style={{ marginTop: '20px' }}>
           <div>
-            <CustomTextField type='text' fullWidth label='Other' placeholder='Other' />
+          <CustomTextField
+                type='text'
+                fullWidth
+                label='Other'
+                placeholder='Other'
+                value={filterSelectedInputCategories || ''} // Handle null case if necessary
+                onChange={(e) => handleInputChange(e.target.value)}
+            />
           </div>
         </div>
       </CardContent>

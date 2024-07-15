@@ -90,7 +90,7 @@ const TimelineComponent = ({ generateImages }: Props) => {
           <TimelineContent>
             <Card>
               <CardContent className='flex flex-col gap-6 pbe-5'>
-                <div className='flex flex-wrap items-center justify-between gap-x-2 mbe-2.5'>
+                <div className='flex flex-wrap items-center justify-between gap-x-2'>
                   <Grid container spacing={12}>
                     {/* Conditional rendering of static image */}
                     {generateImages.length > 0 ? (
@@ -105,9 +105,9 @@ const TimelineComponent = ({ generateImages }: Props) => {
                         </Grid>
                       ))
                     ) : (
-                      // Render static image if generateImages array is empty
+                      // Render static image if generateImages array is empty 
                       <Grid item xs={12} md={4}>
-                        <img src='/images/avatars/2.png' alt='Static Image' height={200} />
+                        <img src='/images/avatars/2.jpeg' alt='Static Image' height={200} width={200} />
                       </Grid>
                     )}
                   </Grid>
@@ -126,10 +126,10 @@ const TimelineComponent = ({ generateImages }: Props) => {
           <TimelineContent>
             <Card>
               <CardContent className='flex flex-col gap-6 pbe-5'>
-                <div className='flex flex-wrap items-center justify-between gap-x-2 mbe-2.5'>
+                <div className='flex flex-wrap items-center justify-between gap-x-2'>
                   <Grid container spacing={12}>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200} />
                     </Grid>
                   </Grid>
                 </div>
@@ -147,13 +147,13 @@ const TimelineComponent = ({ generateImages }: Props) => {
           <TimelineContent>
             <Card>
               <CardContent className='flex flex-col gap-6 pbe-5'>
-                <div className='flex flex-wrap items-center justify-between gap-x-2 mbe-2.5'>
+                <div className='flex flex-wrap items-center justify-between gap-x-2'>
                   <Grid container spacing={12}>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200}/>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200}/>
                     </Grid>
                   </Grid>
                 </div>
@@ -171,16 +171,16 @@ const TimelineComponent = ({ generateImages }: Props) => {
           <TimelineContent>
             <Card>
               <CardContent className='flex flex-col gap-6 pbe-5'>
-                <div className='flex flex-wrap items-center justify-between gap-x-2 mbe-2.5'>
+                <div className='flex flex-wrap items-center justify-between gap-x-2'>
                   <Grid container spacing={12}>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200}/>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200}/>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200}/>
                     </Grid>
                   </Grid>
                 </div>
@@ -198,10 +198,10 @@ const TimelineComponent = ({ generateImages }: Props) => {
           <TimelineContent>
             <Card>
               <CardContent className='flex flex-col gap-6 pbe-5'>
-                <div className='flex flex-wrap items-center justify-between gap-x-2 mbe-2.5'>
+                <div className='flex flex-wrap items-center justify-between gap-x-2'>
                   <Grid container spacing={12}>
                     <Grid item xs={12} md={4}>
-                      <img src='/images/avatars/2.png' height={200} />
+                      <img src='/images/avatars/2.jpeg' height={200} width={200}/>
                     </Grid>
                   </Grid>
                 </div>

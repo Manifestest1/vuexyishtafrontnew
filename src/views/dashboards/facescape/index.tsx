@@ -19,7 +19,7 @@ import TimelineComponent from './TimelineComponent'
 
 const FaceScapeBasicComponent = () => {
   const [quality, setQuality] = useState('low')
-  const [aspectRatio, setAspectRatio] = useState('16:9')
+  const [aspectRatio, setAspectRatio] = useState('16:9') 
   const [batchSize, setBatchSize] = useState(1)
 
   // Filter Field Defined
@@ -27,6 +27,7 @@ const FaceScapeBasicComponent = () => {
   const [selectedFilterOptions, setFilterOptions] = useState([])
   const [selectedSubCategories, setSelectedSubCategories] = useState([])
   const [filterSelectedSubCategories, setFilterSelectedSubCategories] = useState([])
+  const [filterSelectedInputCategories, setFilterSelectedInputCategories] = useState(null)
   const [generateImages, setGenerateImages] = useState([])
 
   const handleChange = event => {
@@ -34,41 +35,52 @@ const FaceScapeBasicComponent = () => {
   }
 
   const genrateApiFunction = async () => {
-    console.log('Filter Data', filterSelectedSubCategories)
+    console.log("batch size", batchSize);
+
+    let textPrompt = '';
+
+    // Check if filterSelectedInputCategories is not null and concatenate with filterSelectedSubCategories
+    if (filterSelectedInputCategories !== null) {
+        const combinedString = `${filterSelectedInputCategories}, ${filterSelectedSubCategories}`;
+        console.log('Filter Data', combinedString);
+        textPrompt = combinedString;
+    } else {
+        // Use filterSelectedSubCategories alone if filterSelectedInputCategories is null
+        const combinedString = `${filterSelectedSubCategories}`;
+        console.log('Filter Data', combinedString);
+        textPrompt = combinedString;
+    }
 
     try {
-      const response = await fetch('https://api.gooey.ai/v3/FaceInpainting/async/', {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer sk-07ztMzsF169B5xoh4Xn9MMhfUWQfPYz3J1I53P288wS6IZNQ',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          input_image: 'https://i.imghippo.com/files/dv8ID1718827153.png',
-          text_prompt: filterSelectedSubCategories,
-          num_outputs: 3
-        })
-      })
+        const response = await fetch('https://api.gooey.ai/v3/FaceInpainting/async/', {
+            method: 'POST',
+            headers: {
+                Authorization: 'Bearer sk-07ztMzsF169B5xoh4Xn9MMhfUWQfPYz3J1I53P288wS6IZNQ',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                input_image: 'https://i.imghippo.com/files/dv8ID1718827153.png',
+                text_prompt: textPrompt, // Set text_prompt here
+                num_outputs: batchSize
+            })
+        });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok ' + response.statusText)
-      }
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
 
-      const data = await response.json()
+        const data = await response.json();
+        console.log('API Response:', data);
 
-      console.log('API Response:', data)
+        // Apply Get Images Api
+        setTimeout(() => {
+            getGenerateImages(data.run_id);
+        }, 25000);
 
-      // Apply Get Images Api
-
-      setTimeout(() => {
-        getGenerateImages(data.run_id)
-      }, 25000)
-
-      // Apply Get Images Api
     } catch (error) {
-      console.error('There was a problem with the fetch operation:', error)
+        console.error('There was a problem with the fetch operation:', error);
     }
-  }
+};
 
   const getGenerateImages = async run_id => {
     const runId = run_id // Replace with your actual run_id
@@ -120,10 +132,12 @@ const FaceScapeBasicComponent = () => {
         <MediaCard></MediaCard>
 
         <FilterComponent
-          selectedFilterOptions={selectedFilterOptions}
+          selectedFilterOptions={selectedFilterOptions} 
           selectedSubCategories={selectedSubCategories}
           setSelectedSubCategories={setSelectedSubCategories}
           setFilterSelectedSubCategories={setFilterSelectedSubCategories}
+          setFilterSelectedInputCategories={setFilterSelectedInputCategories}
+          filterSelectedInputCategories={filterSelectedInputCategories}
           handleChange={handleChange}
         />
 
