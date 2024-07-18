@@ -9,6 +9,7 @@ import Tab from '@mui/material/Tab'
 import TabContext from '@mui/lab/TabContext'
 import TabPanel from '@mui/lab/TabPanel'
 import Grid from '@mui/material/Grid'
+import RazorPayPayment from './razorpay-payment/RazorPayPayment'
 
 // Component Imports
 import CustomTabList from '@core/components/mui/TabList'
@@ -46,12 +47,14 @@ const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactE
             </CustomTabList>
           </Grid>
           <Grid item xs={12}>
-            <TabPanel value={activeTab} className='p-0'>
+            <TabPanel value={activeTab} className='p-0'> 
               {tabContentList[activeTab]}
             </TabPanel>
           </Grid>
         </Grid>
-      </TabContext>
+      </TabContext> 
+
+      {/* <RazorPayPayment/> */}
     </>
   )
 }

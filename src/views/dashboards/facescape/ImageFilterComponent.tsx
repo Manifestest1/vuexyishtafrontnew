@@ -6,7 +6,7 @@ type Props = {
   quality: string
   setQuality: string
   aspectRatio: string
-  setAspectRatio: string
+  setAspectRatio: string 
   batchSize: string
   setBatchSize: string
 }

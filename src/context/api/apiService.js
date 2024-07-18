@@ -27,3 +27,9 @@ export const getAllFiltersData = () => {
 export const fasescapImageUpload = formData => {
   return axios.post('/add_upload_images', formData)
 }
+
+// Razorpay api
+
+export const razorpayCreateOreerApi = (amount, currency,receipt) => {
+  return axios.post('/create-order', { amount, currency, receipt })
+}

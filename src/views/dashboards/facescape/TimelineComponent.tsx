@@ -135,7 +135,7 @@ const TimelineComponent = ({ generateImages }: Props) => {
                 </div>
               </CardContent>
             </Card>
-            <Typography className='mbe-2'>12th January</Typography>
+            <Typography className='mbe-2'>12th January</Typography> 
           </TimelineContent>
         </TimelineItem>
 

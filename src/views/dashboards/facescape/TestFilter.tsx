@@ -10,7 +10,7 @@ import { image_base_path } from '@/context/api/apiService'
 type FilterOption = {
   id: number
   name: string
-  sub_categories: { id: string; sub_category: string; image: string }[]
+  sub_categories: { id: string; filter: string; image: string }[]
 }
 
 type Props = {
@@ -88,7 +88,7 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
                           }}
                         />
                         <Typography variant='body2' sx={{ marginRight: '8px' }}>
-                          {selectFilter.sub_categories.find(sub => sub.id === value)?.sub_category}
+                          {selectFilter.sub_categories.find(sub => sub.id === value)?.filter}
                         </Typography>
                       </Box>
                     ))}
@@ -130,7 +130,7 @@ const FilterComponent = ({ selectedFilterOptions, setSelectedSubCategories }: Pr
                         }}
                       />
                       <Typography variant='body2' sx={{ marginRight: '8px' }}>
-                        {subCategory.sub_category}
+                        {subCategory.filter}
                       </Typography>
                     </Box>
                   </MenuItem>

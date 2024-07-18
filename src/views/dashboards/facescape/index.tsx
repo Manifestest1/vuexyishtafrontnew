@@ -152,7 +152,7 @@ const FaceScapeBasicComponent = () => {
         <ImageFilterComponent
           quality={quality}
           setQuality={setQuality}
-          aspectRatio={aspectRatio}
+          aspectRatio={aspectRatio} 
           setAspectRatio={setAspectRatio}
           batchSize={batchSize}
           setBatchSize={setBatchSize}
