@@ -150,7 +150,7 @@ const FaceScapeBasicComponent = () => {
 
       <Grid item xs={12} md={8}>
         <ImageFilterComponent
-          quality={quality}
+          quality={quality} 
           setQuality={setQuality}
           aspectRatio={aspectRatio} 
           setAspectRatio={setAspectRatio}

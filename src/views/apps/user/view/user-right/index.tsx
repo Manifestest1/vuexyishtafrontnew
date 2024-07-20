@@ -11,6 +11,8 @@ import TabPanel from '@mui/lab/TabPanel'
 import Grid from '@mui/material/Grid'
 import RazorPayPayment from './razorpay-payment/RazorPayPayment'
 
+import RevenueReport from './revenue-report/RevenueReport'
+
 // Component Imports
 import CustomTabList from '@core/components/mui/TabList'
 
@@ -27,13 +29,15 @@ const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactE
       <TabContext value={activeTab}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
-            <CustomTabList onChange={handleChange} variant='scrollable' pill='true'>
+
+            <RevenueReport/>
+            {/* <CustomTabList onChange={handleChange} variant='scrollable' pill='true'>
               <Tab
                 icon={<i className='tabler-bookmark' />}
                 value='billing-plans'
                 label='Billing & Plans'
-                iconPosition='start'
-              />
+                iconPosition='start' 
+              /> */}
               {/* <Tab icon={<i className='tabler-users' />} value='overview' label='Overview' iconPosition='start' />
               <Tab icon={<i className='tabler-lock' />} value='security' label='Security' iconPosition='start' /> */}
 
@@ -44,12 +48,12 @@ const UserRight = ({ tabContentList }: { tabContentList: { [key: string]: ReactE
                 iconPosition='start'
               />
               <Tab icon={<i className='tabler-link' />} value='connections' label='Connections' iconPosition='start' /> */}
-            </CustomTabList>
+            {/* </CustomTabList> */}
           </Grid>
           <Grid item xs={12}>
-            <TabPanel value={activeTab} className='p-0'> 
+            {/* <TabPanel value={activeTab} className='p-0'> 
               {tabContentList[activeTab]}
-            </TabPanel>
+            </TabPanel> */}
           </Grid>
         </Grid>
       </TabContext> 

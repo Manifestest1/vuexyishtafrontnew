@@ -5,11 +5,11 @@ import { useState } from 'react'
 import type { MouseEvent } from 'react'
 
 // Next Imports
-import dynamic from 'next/dynamic' 
+import dynamic from 'next/dynamic'
 
 // MUI Imports
 import Card from '@mui/material/Card'
-import CardHeader from '@mui/material/CardHeader'
+import CardHeader from '@mui/material/CardHeader' 
 import CardContent from '@mui/material/CardContent'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
@@ -17,6 +17,8 @@ import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import { useColorScheme, useTheme } from '@mui/material/styles'
+
+import { getAllCredit } from '@/context/api/apiService'
 
 // Third Party Imports
 import type { ApexOptions } from 'apexcharts'
@@ -255,10 +257,43 @@ const RevenueReport = ({ serverMode }: { serverMode: SystemMode }) => {
         <Grid item xs={12} sm={8} className='border-r'>
           <CardHeader title='Revenue Report' />
           <CardContent>
-            <AppReactApexCharts type='bar' height={319} width='100%' series={barSeries} options={barOptions} />
+            <AppReactApexCharts type='bar' height={320} width='100%' series={barSeries} options={barOptions} />
           </CardContent>
         </Grid>
         <Grid item xs={12} sm={4}>
+        {/* <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
+  <Button
+    size='small'
+    variant='tonal'
+    onClick={handleClick}
+    endIcon={<i className='tabler-chevron-down text-xl' />}
+  >
+    Add Credit
+  </Button>
+  <Menu
+    keepMounted
+    anchorEl={anchorEl}
+    onClose={handleClose}
+    open={Boolean(anchorEl)}
+    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+  >
+    {creditOptions.map((credit) => (
+      <MenuItem key={credit} onClick={() => handleCreditSelection(credit)}>
+        {credit} credit
+      </MenuItem>
+    ))}
+  </Menu>
+  <div className='flex flex-col items-center'>
+    <Typography variant='h3'>$25,825</Typography>
+    <Typography>
+      <span className='font-medium text-textPrimary'>Budget: </span>56,800
+    </Typography>
+  </div>
+  <AppReactApexCharts type='line' height={80} series={lineSeries} options={lineOptions} />
+  <Button variant='contained'>Buy Now</Button>
+</CardContent> */}
+
           <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
             <Button
               size='small'
@@ -289,7 +324,7 @@ const RevenueReport = ({ serverMode }: { serverMode: SystemMode }) => {
               </Typography>
             </div>
             <AppReactApexCharts type='line' height={80} series={lineSeries} options={lineOptions} />
-            <Button variant='contained'>Increase Budget</Button>
+            <Button variant='contained'>Buy Now</Button>
           </CardContent>
         </Grid>
       </Grid>

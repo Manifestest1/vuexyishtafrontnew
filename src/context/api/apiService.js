@@ -13,7 +13,7 @@ export const userRequestPasswordReset = email => {
 }
 
 export const userPasswordReset = (token, newPassword) => {
-  return axios.post('/request_password_reset', { token, newPassword })
+  return axios.post('/request_password_reset', { token, newPassword }) 
 }
 
 export const userUpdateProfile = formData => {
@@ -26,6 +26,11 @@ export const getAllFiltersData = () => {
 
 export const fasescapImageUpload = formData => {
   return axios.post('/add_upload_images', formData)
+}
+
+// Credit api
+export const getAllCredit = () => {
+  return axios.get('/get_credits_data')
 }
 
 // Razorpay api
