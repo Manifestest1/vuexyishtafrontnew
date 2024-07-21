@@ -33,6 +33,10 @@ export const getAllCredit = () => {
   return axios.get('/get_credits_data')
 }
 
+export const userCreditBalanceDedcut = batchsize => {
+  return axios.post('/user_credit_balance_deduct', { batchsize })
+}
+
 // Razorpay api
 
 export const razorpayCreateOreerApi = (amount, currency,receipt) => {

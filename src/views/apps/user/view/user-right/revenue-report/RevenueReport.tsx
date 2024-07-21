@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import type { MouseEvent } from 'react'
 
 // Next Imports
@@ -48,14 +48,57 @@ const lineSeries = [
 const RevenueReport = ({ serverMode }: { serverMode: SystemMode }) => {
   // States
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [allCreditData, setCreditAllData] = useState([])
+  // const [getSelectedValue,setSelectedValue] = useState()
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+  
+
+  // Start get All credit Api Function
+  const getAllCreditApiFun = () => {
+    getAllCredit()
+    .then(response => {
+      console.log(response.data, 'Credit Data')
+      setCreditAllData(response.data)
+    })
+    .catch(error => {
+      if (error.response.status === 401) {
+        // Handle unauthorized access
+      }
+    })
+}
+
+useEffect(() => {
+  getAllCreditApiFun() 
+}, [])
+
+ // Define a variable to hold the label of the first item
+ const firstItemLabel = allCreditData.length > 0 ? allCreditData[0].label : '';
+ const firstItemValue = allCreditData.length > 0 ? allCreditData[0].value : '';
+
+ const [selectedValue, setSelectedValue] = useState(firstItemValue);
+
+ // Display the label of the selected item in the Button
+ const buttonLabel = selectedValue ? selectedValue.label : firstItemLabel;
+
+ const handleChange = (value) => {
+  setSelectedValue(value); // Set the selected value to state
+  handleClose(); // Close the menu after selection (optional)
+  // Perform any other actions with the selected value here
+  console.log('Selected value:', value);
+};
+
+// End get All credit Api Function
+
+const handleClick = (event) => {
+  setAnchorEl(event.currentTarget);
+  console.log("click on handle Click",event.currentTarget)
+};
 
   const handleClose = () => {
     setAnchorEl(null)
   }
+
+
 
   // Hooks
   const theme = useTheme()
@@ -294,33 +337,21 @@ const RevenueReport = ({ serverMode }: { serverMode: SystemMode }) => {
   <Button variant='contained'>Buy Now</Button>
 </CardContent> */}
 
-          <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
-            <Button
-              size='small'
-              variant='tonal'
-              onClick={handleClick}
-              endIcon={<i className='tabler-chevron-down text-xl' />}
-            >
-              {new Date().getFullYear()}
-            </Button>
-            <Menu
-              keepMounted
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              open={Boolean(anchorEl)}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-              {yearOptions.map((year: number) => (
-                <MenuItem key={year} onClick={handleClose}>
-                  {year}
-                </MenuItem>
-              ))}
-            </Menu>
+      <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
+        <Button size='small' variant='tonal' onClick={handleClick} // Pass null or another value if needed
+          endIcon={<i className='tabler-chevron-down text-xl' />}>{buttonLabel}
+        </Button>
+        <Menu keepMounted anchorEl={anchorEl} onClose={handleClose} open={Boolean(anchorEl)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            {allCreditData.map((option) => (
+            <MenuItem key={option.credit} onClick={() => handleChange(option)}>
+              {option.label}
+            </MenuItem>
+            ))}
+        </Menu>
             <div className='flex flex-col items-center'>
-              <Typography variant='h3'>$25,825</Typography>
+              <Typography variant='h3'>${selectedValue?.value}</Typography>
               <Typography>
-                <span className='font-medium text-textPrimary'>Budget: </span>56,800
+                <span className='font-medium text-textPrimary'>Credit Balance: </span>56,800
               </Typography>
             </div>
             <AppReactApexCharts type='line' height={80} series={lineSeries} options={lineOptions} />
