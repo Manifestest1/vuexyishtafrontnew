@@ -18,7 +18,9 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import { useColorScheme, useTheme } from '@mui/material/styles'
 
-import { getAllCredit } from '@/context/api/apiService'
+import RazorPayPayment from '../razorpay-payment/RazorPayPayment'
+
+import { getAllCredit,getAuthUserData } from '@/context/api/apiService'
 
 // Third Party Imports
 import type { ApexOptions } from 'apexcharts'
@@ -46,59 +48,62 @@ const lineSeries = [
 ]
 
 const RevenueReport = ({ serverMode }: { serverMode: SystemMode }) => {
-  // States
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [allCreditData, setCreditAllData] = useState([])
-  // const [getSelectedValue,setSelectedValue] = useState()
+ 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [allCreditData, setCreditAllData] = useState([]);
+  const [selectedValue, setSelectedValue] = useState(null);
+  const [getuserData, updateuserData] = useState({ credit_balance: '' })
+
+  useEffect(() => {
+    getAllCreditApiFun();
+    getAuthUserDataFun();
+  }, []);
+
+  const getAllCreditApiFun = () => {
+    getAllCredit()
+      .then(response => {
+        console.log(response.data, 'Credit Data');
+        setCreditAllData(response.data);
+        if (response.data.length > 0) 
+        {
+          setSelectedValue(response.data[0]); // Set the first item as default
+        }
+      })
+      .catch(error => {
+        if (error.response.status === 401) 
+        {
+          // Handle unauthorized access
+        }
+      });
+  };
+
+  const getAuthUserDataFun = () => {
+    getAuthUserData()
+      .then(response => {
+        console.log(response.data.user.name, 'Get Auth User')
+        updateuserData(response.data.user)
+      })
+      .catch(error => {
+        if (error.response.status === 401) {
+          // Handle unauthorized access
+        }
+      })
+  }
 
   
 
-  // Start get All credit Api Function
-  const getAllCreditApiFun = () => {
-    getAllCredit()
-    .then(response => {
-      console.log(response.data, 'Credit Data')
-      setCreditAllData(response.data)
-    })
-    .catch(error => {
-      if (error.response.status === 401) {
-        // Handle unauthorized access
-      }
-    })
-}
+  const handleChange = (option) => {
+    setSelectedValue(option); // Update selectedValue with the new option
+    handleClose(); // Close the menu after selection (optional)
+  };
 
-useEffect(() => {
-  getAllCreditApiFun() 
-}, [])
-
- // Define a variable to hold the label of the first item
- const firstItemLabel = allCreditData.length > 0 ? allCreditData[0].label : '';
- const firstItemValue = allCreditData.length > 0 ? allCreditData[0].value : '';
-
- const [selectedValue, setSelectedValue] = useState(firstItemValue);
-
- // Display the label of the selected item in the Button
- const buttonLabel = selectedValue ? selectedValue.label : firstItemLabel;
-
- const handleChange = (value) => {
-  setSelectedValue(value); // Set the selected value to state
-  handleClose(); // Close the menu after selection (optional)
-  // Perform any other actions with the selected value here
-  console.log('Selected value:', value);
-};
-
-// End get All credit Api Function
-
-const handleClick = (event) => {
-  setAnchorEl(event.currentTarget);
-  console.log("click on handle Click",event.currentTarget)
-};
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleClose = () => {
-    setAnchorEl(null)
-  }
-
-
+    setAnchorEl(null);
+  };
 
   // Hooks
   const theme = useTheme()
@@ -294,6 +299,8 @@ const handleClick = (event) => {
     }
   }
 
+  const buttonLabel = selectedValue ? selectedValue.label : 'Select Credit';
+
   return (
     <Card>
       <Grid container>
@@ -304,58 +311,37 @@ const handleClick = (event) => {
           </CardContent>
         </Grid>
         <Grid item xs={12} sm={4}>
-        {/* <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
-  <Button
-    size='small'
-    variant='tonal'
-    onClick={handleClick}
-    endIcon={<i className='tabler-chevron-down text-xl' />}
-  >
-    Add Credit
-  </Button>
-  <Menu
-    keepMounted
-    anchorEl={anchorEl}
-    onClose={handleClose}
-    open={Boolean(anchorEl)}
-    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-    transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-  >
-    {creditOptions.map((credit) => (
-      <MenuItem key={credit} onClick={() => handleCreditSelection(credit)}>
-        {credit} credit
-      </MenuItem>
-    ))}
-  </Menu>
-  <div className='flex flex-col items-center'>
-    <Typography variant='h3'>$25,825</Typography>
-    <Typography>
-      <span className='font-medium text-textPrimary'>Budget: </span>56,800
-    </Typography>
-  </div>
-  <AppReactApexCharts type='line' height={80} series={lineSeries} options={lineOptions} />
-  <Button variant='contained'>Buy Now</Button>
-</CardContent> */}
-
-      <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
-        <Button size='small' variant='tonal' onClick={handleClick} // Pass null or another value if needed
-          endIcon={<i className='tabler-chevron-down text-xl' />}>{buttonLabel}
-        </Button>
-        <Menu keepMounted anchorEl={anchorEl} onClose={handleClose} open={Boolean(anchorEl)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
-            {allCreditData.map((option) => (
-            <MenuItem key={option.credit} onClick={() => handleChange(option)}>
-              {option.label}
-            </MenuItem>
-            ))}
-        </Menu>
+          <CardContent className='flex flex-col items-center justify-center min-bs-full gap-8'>
+            <Typography>
+              <span className='font-medium text-textPrimary'>Credit Balance: </span>{getuserData?.credit_balance}
+            </Typography>
+            <Button
+              size='small'
+              variant='tonal'
+              onClick={handleClick}
+              endIcon={<i className='tabler-chevron-down text-xl' />}
+            >
+              {buttonLabel}
+            </Button>
+            <Menu
+              keepMounted
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              open={Boolean(anchorEl)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              {allCreditData.map((option) => (
+                <MenuItem key={option.credit} onClick={() => handleChange(option)}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Menu>
             <div className='flex flex-col items-center'>
               <Typography variant='h3'>${selectedValue?.value}</Typography>
-              <Typography>
-                <span className='font-medium text-textPrimary'>Credit Balance: </span>56,800
-              </Typography>
             </div>
             <AppReactApexCharts type='line' height={80} series={lineSeries} options={lineOptions} />
-            <Button variant='contained'>Buy Now</Button>
+            <RazorPayPayment selectedCreditValue={selectedValue} updateuserData={updateuserData}/>
           </CardContent>
         </Grid>
       </Grid>

@@ -11,7 +11,7 @@ import TabPanel from '@mui/lab/TabPanel'
 import Grid from '@mui/material/Grid'
 import RazorPayPayment from './razorpay-payment/RazorPayPayment'
 
-import RevenueReport from './revenue-report/RevenueReport'
+import RevenueReport from './revenue-report/RevenueReport' 
 
 // Component Imports
 import CustomTabList from '@core/components/mui/TabList'

@@ -42,3 +42,8 @@ export const userCreditBalanceDedcut = batchsize => {
 export const razorpayCreateOreerApi = (amount, currency,receipt) => {
   return axios.post('/create-order', { amount, currency, receipt })
 }
+
+
+export const razorpayGeneratePaymentDetailApi = (order_payment_id,payment_id,payment,credit) => {
+  return axios.post('/add_payment_detail', { order_payment_id,payment_id,payment,credit })
+}
