@@ -27,69 +27,45 @@ function RazorPayPayment({ selectedCreditValue,updateuserData }) {
         console.log('order', order);
   
         // Razorpay Payment options
-        // const options = {
-        //   key: "", // Add your Razorpay key here
-        //   amount: amountInCents, // Amount in the smallest unit (cents)
-        //   currency,
-        //   name: "Ishta",
-        //   description: "Transaction",
-        //   image: "https://i.ibb.co/5Y3m33n/test.png",
-        //   order_id: order.data.id,
-        //   handler: async function (response) {
-        //     const body = { ...response };
-  
-        //     try {
-        //       // Validate the payment on your server
-        //       const validateResponse = await fetch('http://localhost:8000/api/order-validate', {
-        //         method: 'POST',
-        //         headers: {
-        //           'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(body),
-        //       });
-  
-        //       const jsonResponse = await validateResponse.json();
-        //       console.log('jsonResponse', jsonResponse);
-  
-        //       // Call API to save payment details after order creation
-        //       razorpayGeneratePaymentDetailApi(order.data.id,jsonResponse.paymentId,getamountInUSD, getamountCredit)
-        //         .then(res => {
-        //           console.log('Payment details saved:', res);
-        //           updateuserData(res.data.user_credit_balance);
-        //           // Handle success if needed
-        //         })
-        //         .catch(error => {
-        //           console.error('Error saving payment details:', error);
-        //           // Handle error if needed
-        //         });
-  
-        //     } catch (error) {
-        //       console.error('Validation error:', error);
-        //     }
-        //   },
-        //   prefill: {
-        //     name: "Ishta",
-        //     email: "webcoder@example.com",
-        //     contact: "6261966919",
-        //   },
-        //   notes: {
-        //     address: "Razorpay Corporate Office",
-        //   },
-        //   theme: {
-        //     color: "#7367F0",
-        //   },
-        // };
-
         const options = {
-          key: "", // Replace with your Razorpay key
-          amount: amountInCents,
-          currency: currency,
+          key: "", // Add your Razorpay key here
+          amount: amountInCents, // Amount in the smallest unit (cents)
+          currency,
           name: "Ishta",
           description: "Transaction",
           image: "https://i.ibb.co/5Y3m33n/test.png",
           order_id: order.data.id,
           handler: async function (response) {
-            // Handler function remains the same
+            const body = { ...response };
+  
+            try {
+              // Validate the payment on your server
+              const validateResponse = await fetch('http://localhost:8000/api/order-validate', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+              });
+  
+              const jsonResponse = await validateResponse.json();
+              console.log('jsonResponse', jsonResponse);
+  
+              // Call API to save payment details after order creation
+              razorpayGeneratePaymentDetailApi(order.data.id,jsonResponse.paymentId,getamountInUSD, getamountCredit)
+                .then(res => {
+                  console.log('Payment details saved:', res);
+                  updateuserData(res.data.user_credit_balance);
+                  // Handle success if needed
+                })
+                .catch(error => {
+                  console.error('Error saving payment details:', error);
+                  // Handle error if needed
+                });
+  
+            } catch (error) {
+              console.error('Validation error:', error);
+            }
           },
           prefill: {
             name: "Ishta",
@@ -102,16 +78,7 @@ function RazorPayPayment({ selectedCreditValue,updateuserData }) {
           theme: {
             color: "#7367F0",
           },
-          payment: {
-            display: {
-              card: true,  // Enable credit/debit cards
-              netbanking: true,  // Enable netbanking
-              wallet: true,  // Enable wallets
-              upi: true,  // Enable UPI
-            },
-          },
         };
-        
   
         // Initialize Razorpay checkout
         if (window.Razorpay) {
